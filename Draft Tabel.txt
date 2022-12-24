@@ -1,0 +1,171 @@
+MIGRATION (Menit Ke 25:39)
+
+HospitalSettings
+//Basic Settings
+$table->id();
+$table->string('name')->nullable();
+$table->string('website')->nullable();
+$table->string('phone')->nullable();
+$table->string('fax')->nullable();
+$table->string('country')->nullable();
+$table->string('address')->nullable();
+$table->string('establish')->nullable();
+$table->string('email')->unique()->nullable();
+$table->string('logo')->nullable();
+$table->string('favicon')->nullable();
+$table->string('size')->nullable();
+$table->string('type')->nullable();
+$table->string('facebook')->nullable();
+$table->string('twitter')->nullable();
+$table->string('whatsapp')->nullable();
+$table->string('instagram')->nullable();
+//Mail Driver Config
+$table->string('driver')->nullable();
+$table->string('encryption')->nullable();
+$table->string('host')->nullable();
+$table->string('port')->nullable();
+$table->string('username')->nullable();
+$table->string('email_from')->nullable();
+$table->string('email_from_name')->nullable();
+//Invoice Setting Config
+$table->string('invoice_prefix')->nullable();
+$table->string('invoice_logo')->nullable();
+$table->string('user_prefix')->nullable();
+$table->string('patient_prefix')->nullable();
+$table->string('invoice_number_mood')->nullable();
+$table->string('invoice_last_number')->nullable();
+//Tax Config
+$table->string('taxes')->default(0);
+$table->string('discount')->default(0);
+$table->timestamps();
+
+
+
+User
+$table->id();
+$table->integer('title')->comment('Such as Dr. Mr. Mrs. Etc.');
+$table->string('name');
+$table->string('username');
+$table->string('email')->unique();
+$table->timestamp('email_verified_at')->nullable();
+$table->string('password');
+$table->string('gender')->comment('M=Male','F=Female')->default('M');
+$table->date('dob');
+$table->integer('age');
+$table->integer('religion')->nullable();
+$table->text('address_1')->nullable();
+$table->text('address_2')->nullable();
+$table->string('image')->nullable();
+$table->tinyInteger('status')->default(0);
+$table->rememberToken();
+$table->foreignId('created_by_id')->nullable()->constrained('users')->onDelete('cascade')->onUpdate('cascade');
+$table->foreignId('updated_by_id')->nullable()->constrained('users')->onDelete('cascade')->onUpdate('cascade');
+$table->timestamps();
+
+Branches
+$table->id();
+$table->string('name')->fulltext();
+$table->text('address')->fulltext();
+$table->string('phone')->fulltext();
+$table->string('email')->unique()->fulltext();
+$table->string('website')->nullable()->unique()->fulltext();
+$table->tinyInteger('status')->default(0);
+$table->foreignId('created_by_id')->nullable()->constrained('users')->onDelete('cascade')->onUpdate('cascade');
+$table->foreignId('updated_by_id')->nullable()->constrained('users')->onDelete('cascade')->onUpdate('cascade');
+$table->timestamps();
+
+Departments
+$table->id();
+$table->string('name')->fulltext();
+$table->string('code')->fulltext();
+$table->tinyInteger('status')->default(0);
+$table->foreignId('created_by_id')->nullable()->constrained('users')->onDelete('cascade')->onUpdate('cascade');
+$table->foreignId('updated_by_id')->nullable()->constrained('users')->onDelete('cascade')->onUpdate('cascade');
+$table->timestamps();
+
+Specialist
+$table->id();
+$table->string('name')->fulltext();
+$table->string('code')->fulltext();
+$table->tinyInteger('status')->default(0)->comment('1=active','0=inactive');
+$table->foreignId('created_by_id')->nullable()->constrained('users')->onDelete('cascade')->onUpdate('cascade');
+$table->foreignId('updated_by_id')->nullable()->constrained('users')->onDelete('cascade')->onUpdate('cascade');
+$table->timestamps();
+
+Doctor
+$table->id();
+$table->string('about_doctor')->nullable();
+$table->integer('charge')->default(0);
+$table->string('experience')->nullable();
+$table->foreignIdFor(User::class)->nullable()->constrained('users')->onDelete('cascade')->onUpdate('cascade');
+$table->foreignIdFor(Specialist::class)->nullable()->constrained('users')->onDelete('cascade')->onUpdate('cascade');
+$table->foreignId('created_by_id')->nullable()->constrained('users')->onDelete('cascade')->onUpdate('cascade');
+$table->foreignId('updated_by_id')->nullable()->constrained('users')->onDelete('cascade')->onUpdate('cascade');
+$table->timestamps();
+
+Nurse
+$table->id();
+$table->string('about_nurse')->nullable();
+$table->string('experience')->nullable();
+$table->foreignIdFor(User::class)->nullable()->constrained('users')->onDelete('cascade')->onUpdate('cascade');
+$table->foreignIdFor(Specialist::class)->nullable()->constrained('users')->onDelete('cascade')->onUpdate('cascade');
+$table->foreignId('created_by_id')->nullable()->constrained('users')->onDelete('cascade')->onUpdate('cascade');
+$table->foreignId('updated_by_id')->nullable()->constrained('users')->onDelete('cascade')->onUpdate('cascade');
+$table->timestamps();
+
+Patient
+$table->id();
+$table->string('registration_no')->nullable();
+$table->string('registration_date')->nullable();
+$table->integer('referral')->nullable()->comment('1=Yes, 2=No');
+$table->string('referred_by')->nullable();
+$table->integer('patient_type')->nullable()->comment('1=Inpatient, 2=Outpatient');
+$table->integer('title')->comment('Such as Dr. Mr. Mrs. Etc.');
+$table->string('name')->nullable()->fulltext()->comment('Full name of the patient');
+$table->date('dob')->nullable()->comment('Numbers only');
+$table->integer('age')->nullable()->comment('Numbers only');
+$table->string('gender')->nullable()->comment('M=Male,F=Female');
+$table->string('marital_status')->nullable()->comment('S=Single, D=Divorce, M=Married');
+$table->string('blood_group')->nullable();
+$table->string('email')->nullable()->comment('Because one email can be use for multiple patient from the same house');
+$table->string('phone')->nullable()->comment('Because one phone number can be use for multiple patient from the same house');
+$table->integer('religion')->nullable();
+$table->integer('occupation')->nullable()->comment('Student, Farmer, Etc.');
+$table->string('country')->nullable();
+$table->string('home_phone')->nullable();
+$table->text('home_address')->nullable();
+$table->string('father_name')->nullable();
+$table->text('father_address')->nullable();
+$table->string('father_phone')->nullable();
+$table->string('mother_name')->nullable();
+$table->text('mother_address')->nullable();
+$table->string('mother_phone')->nullable();
+
+$table->tinyInteger('same_a_patient')->default(0)->comment('If same as patient all the address will copy from the patient to the next of kin box');
+$table->string('next_of_kin_phone')->nullable();
+$table->string('next_of_kin_email')->nullable();
+$table->text('next_of_kin_address')->nullable();
+
+$table->string('payment_method')->default(1)->comment('1=Cash');
+
+$table->text('symptoms')->nullable();
+$table->string('image')->nullable();
+
+$table->foreignIdFor(User::class)->nullable()->constrained()->comment('User Id is The Doctor Id in this table')->onDelete('cascade')->onUpdate('cascade');
+$table->foreignId('created_by_id')->nullable()->constrained('users')->onDelete('cascade')->onUpdate('cascade');
+$table->foreignId('updated_by_id')->nullable()->constrained('users')->onDelete('cascade')->onUpdate('cascade');
+$table->timestamps();
+
+
+Patient Visit
+$table->id();
+$table->string('visit_no')->nullable();
+$table->string('visit_type')->nullable();
+$table->date('visit_date')->nullable();
+$table->tinyInteger('visit_status')->default(0)->comment('When complete the status will change');
+$table->text('description')->nullable();
+$table->foreignIdFor(Patient::class)->nullable()->constrained()->onDelete('cascade')->onUpdate('cascade')
+$table->foreignIdFor(User::class)->nullable()->constrained()->comment('User Id is The Doctor Id in this table')->onDelete('cascade')->onUpdate('cascade');
+$table->foreignId('created_by_id')->nullable()->constrained('users')->onDelete('cascade')->onUpdate('cascade');
+$table->foreignId('updated_by_id')->nullable()->constrained('users')->onDelete('cascade')->onUpdate('cascade');
+$table->timestamps();
