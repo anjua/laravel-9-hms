@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use App\Models\BloodStock;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 class CreateBloodStockDetailsTable extends Migration
 {
@@ -15,6 +16,12 @@ class CreateBloodStockDetailsTable extends Migration
     {
         Schema::create('blood_stock_details', function (Blueprint $table) {
             $table->id();
+            $table->integer('unit')->default(0);
+            $table->integer('total')->default(0);
+            $table->integer('balance')->default(0);
+            $table->foreignIdFor(BloodStock::class)->nullable()->constrained()->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('created_by_id')->nullable()->constrained('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('updated_by_id')->nullable()->constrained('users')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
     }
