@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use App\Http\Jambasangsang\Traits\updatableAndCreatable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Http\Jambasangsang\Traits\updatableAndCreatable;
 
 class Purchase extends Model
 {
@@ -32,4 +33,39 @@ class Purchase extends Model
         'created_by_id',
         'updated_by_id'
     ];
+
+    public function medicine_type(): BelongsTo
+    {
+        return $this->belongsTo(MedicineType::class, 'medicine_type_id', 'id');
+    }
+
+    public function medicine_category(): BelongsTo
+    {
+        return $this->belongsTo(MedicineCategory::class, 'medicine_category_id', 'id');
+    }
+
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class, 'supplier_id', 'id');
+    }
+
+    /**
+     * Get the user that owns the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function createdBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by_id', 'id');
+    }
+
+    /**
+     * Get the user that owns the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function updatedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'updated_by_id', 'id');
+    }
 }
